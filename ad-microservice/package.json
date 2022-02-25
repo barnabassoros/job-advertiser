@@ -1,0 +1,28 @@
+{
+  "name": "ad-microservice",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node build/index.js",
+    "build": "tsc && tscpaths -p tsconfig.json -s ./ -o ./build"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^17.0.19",
+    "tscpaths": "^0.0.9",
+    "typescript": "^4.5.5"
+  },
+  "dependencies": {
+    "@prisma/client": "^3.10.0",
+    "@types/express": "^4.17.13",
+    "body-parser": "^1.19.2",
+    "dotenv": "^16.0.0",
+    "express": "^4.17.3",
+    "express-async-errors": "^3.1.1",
+    "prisma": "^3.10.0",
+    "zod": "^3.12.0"
+  }
+}
