@@ -34,3 +34,11 @@ export const update = async (req: Request, res: Response) => {
   await prisma.ad.update({ where: { id: id }, data: { ...data } });
   res.json({ message: "succesful_update" });
 };
+
+export const deleteOne = async (req: Request, res: Response) => {
+  const id = req.params.id;
+  const ad = await prisma.ad.findUnique({ where: { id } });
+  if (!ad) throw new Error("ad_not_found");
+  await prisma.ad.delete({ where: { id } });
+  res.json({ message: "succesful_delete" });
+};
