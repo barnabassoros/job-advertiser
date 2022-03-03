@@ -1,26 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { z } from "zod";
 import prisma from "../lib/prisma";
-
-type CreateAdType = {
-  time: Date;
-  location: string;
-  duration: string;
-  payment: number;
-  description: string;
-};
-
-const CreateAdPayload = z.object({
-  time: z.string(),
-  location: z.string(),
-  duration: z.string(),
-  payment: z.number(),
-  description: z.string(),
-});
-
-type AdType = CreateAdType & {
-  id: string;
-};
+import { CreateAdPayload, AdType, UpdateAdPayload } from "@type/ad";
 
 export const create = async (
   req: Request,
@@ -43,4 +24,13 @@ export const listAll = async (
 ) => {
   const ads: AdType[] = await prisma.ad.findMany();
   res.json(ads);
+};
+
+export const update = async (req: Request, res: Response) => {
+  const data = UpdateAdPayload.parse(req.body);
+  const id = req.params.id;
+  const ad = await prisma.ad.findUnique({ where: { id } });
+  if (!ad) throw new Error("ad_not_found");
+  await prisma.ad.update({ where: { id: id }, data: { ...data } });
+  res.json({ message: "succesful_update" });
 };

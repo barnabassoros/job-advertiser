@@ -15,7 +15,8 @@
       "@controller/*": ["controllers/*"],
       "@lib/*": ["lib/*"],
       "@routes/*": ["routes/*"],
-      "@middleware/*": ["middleware/*"]
+      "@middleware/*": ["middleware/*"],
+      "@type/*": ["types/*"]
     }
   }
 }
