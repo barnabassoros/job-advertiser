@@ -4,7 +4,7 @@ import { ZodError } from "zod";
 const errorHandler = (error:Error, req: Request, res: Response, next:NextFunction) => {
   if (error instanceof ZodError) {
     // type validation failed
-    res.status(500).json({
+    res.status(400).json({
       message: "type_validation_failed",
       data: error.message,
     });

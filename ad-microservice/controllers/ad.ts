@@ -14,7 +14,7 @@ export const create = async (
       ...data,
     },
   });
-  res.json({ message: "succesful_creation" });
+  res.json({ message: "succesful_creation" }).status(201);
 };
 
 export const listAll = async (
@@ -23,7 +23,7 @@ export const listAll = async (
   next: NextFunction
 ) => {
   const ads: AdType[] = await prisma.ad.findMany();
-  res.json(ads);
+  res.json(ads).status(200);
 };
 
 export const update = async (req: Request, res: Response) => {
@@ -32,7 +32,7 @@ export const update = async (req: Request, res: Response) => {
   const ad = await prisma.ad.findUnique({ where: { id } });
   if (!ad) throw new Error("ad_not_found");
   await prisma.ad.update({ where: { id: id }, data: { ...data } });
-  res.json({ message: "succesful_update" });
+  res.json({ message: "succesful_update" }).status(204);
 };
 
 export const deleteOne = async (req: Request, res: Response) => {
@@ -40,5 +40,5 @@ export const deleteOne = async (req: Request, res: Response) => {
   const ad = await prisma.ad.findUnique({ where: { id } });
   if (!ad) throw new Error("ad_not_found");
   await prisma.ad.delete({ where: { id } });
-  res.json({ message: "succesful_delete" });
+  res.json({ message: "succesful_delete" }).status(204);
 };
