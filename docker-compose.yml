@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0.28
+    environment:
+      - MYSQL_ROOT_PASSWORD=pw
+      - MQSQL_DATABASE=ad
+    ports:
+      - 3306:3306
+    volumes:
+      - db:/var/lib/mysql
+  ad-app:
+    build: ./ad-microservice
+    container_name: ad-app
+    expose:
+      - '3000'
+    ports:
+      - '3000:3000'
+    command: sh deploy.sh
+volumes:
+  db:
