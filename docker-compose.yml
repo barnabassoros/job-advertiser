@@ -1,24 +1,42 @@
 version: '3.8'
 
 services:
-  db:
+  db_ad:
     image: mysql:8.0.28
+    container_name: db_ad
     environment:
       - MYSQL_ROOT_PASSWORD=pw
       - MQSQL_DATABASE=ad
       - MYSQL_USER=root
-    ports:
-      - 3306:3306
     volumes:
       - ./ad-microservice/db:/docker-entrypoint-initdb.d
-      - db:/var/lib/mysql
-  ad-app:
+      - ad-db:/var/lib/mysql
+  app_ad:
     build: ./ad-microservice
-    container_name: ad-app
+    container_name: app_ad
     expose:
       - '3000'
     ports:
       - '3000:3000'
     command: npm run start
+  db_registration:
+    image: mysql:8.0.28
+    container_name: db_registration
+    environment:
+      - MYSQL_ROOT_PASSWORD=pw
+      - MQSQL_DATABASE=registration
+      - MYSQL_USER=root
+    volumes:
+      - ./register-microservice/db:/docker-entrypoint-initdb.d
+      - registration-db:/var/lib/mysql
+  app_registration:
+    build: ./register-microservice
+    container_name: app_registration
+    expose:
+      - '3001'
+    ports:
+      - '3001:3001'
+    command: npm run start
 volumes:
-  db:
+  ad-db:
+  registration-db:
