@@ -26,6 +26,16 @@ export const listAll = async (
   res.json(ads).status(200);
 };
 
+export const listOne = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const id = req.params.id;
+  const ad = await db("ad").select().where({ id });
+  res.json(ad).status(200);
+};
+
 export const update = async (req: Request, res: Response) => {
   const data = UpdateAdPayload.parse(req.body);
   const id = req.params.id;
