@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
-import { z } from "zod";
-import prisma from "../lib/prisma";
-import { CreateAdPayload, AdType, UpdateAdPayload } from "@type/ad";
+import { CreateAdPayload, Ad, UpdateAdPayload } from "@type/ad";
+import { v4 as uuid } from "uuid";
+import db from "@lib/knex";
 
 export const create = async (
   req: Request,
@@ -9,12 +9,12 @@ export const create = async (
   next: NextFunction
 ) => {
   const data = CreateAdPayload.parse(req.body);
-  await prisma.ad.create({
-    data: {
-      ...data,
-    },
-  });
-  res.json({ message: "succesful_creation" }).status(201);
+  const ad: Ad = {
+    id: uuid(),
+    ...data,
+  };
+  await db("ad").insert(ad);
+  res.status(201).send();
 };
 
 export const listAll = async (
@@ -22,23 +22,25 @@ export const listAll = async (
   res: Response,
   next: NextFunction
 ) => {
-  const ads: AdType[] = await prisma.ad.findMany();
+  const ads: Ad[] = await db<Ad>("ad").select("*");
   res.json(ads).status(200);
 };
 
 export const update = async (req: Request, res: Response) => {
   const data = UpdateAdPayload.parse(req.body);
   const id = req.params.id;
-  const ad = await prisma.ad.findUnique({ where: { id } });
+  const ad = await db("ad").select().where({ id });
   if (!ad) throw new Error("ad_not_found");
-  await prisma.ad.update({ where: { id: id }, data: { ...data } });
-  res.json({ message: "succesful_update" }).status(204);
+  await db("ad")
+    .where({ id })
+    .update({ ...data });
+  res.status(204).send();
 };
 
 export const deleteOne = async (req: Request, res: Response) => {
   const id = req.params.id;
-  const ad = await prisma.ad.findUnique({ where: { id } });
+  const ad = await db("ad").select().where({ id });
   if (!ad) throw new Error("ad_not_found");
-  await prisma.ad.delete({ where: { id } });
-  res.json({ message: "succesful_delete" }).status(204);
+  await db("ad").where({ id }).delete();
+  res.status(204).send();
 };

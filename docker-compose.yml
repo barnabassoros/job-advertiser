@@ -6,9 +6,11 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=pw
       - MQSQL_DATABASE=ad
+      - MYSQL_USER=root
     ports:
       - 3306:3306
     volumes:
+      - ./ad-microservice/db:/docker-entrypoint-initdb.d
       - db:/var/lib/mysql
   ad-app:
     build: ./ad-microservice
@@ -17,6 +19,6 @@ services:
       - '3000'
     ports:
       - '3000:3000'
-    command: sh deploy.sh
+    command: npm run start
 volumes:
   db:

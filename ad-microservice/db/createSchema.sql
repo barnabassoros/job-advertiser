@@ -1,13 +1,7 @@
-/*
-  Warnings:
+CREATE DATABASE `ad`;
 
-  - You are about to drop the `user` table. If the table is not empty, all the data it contains will be lost.
+USE ad;
 
-*/
--- DropTable
-DROP TABLE `user`;
-
--- CreateTable
 CREATE TABLE `ad` (
     `id` VARCHAR(191) NOT NULL,
     `time` DATETIME(3) NOT NULL,
