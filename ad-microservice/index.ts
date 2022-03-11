@@ -3,6 +3,7 @@ import bodyParser from "body-parser";
 import dotenv from "dotenv";
 import adRouter from "@routes/adRouter";
 import errorHandler from "@middleware/errorHandler";
+import cors from "cors";
 
 dotenv.config();
 
@@ -15,6 +16,8 @@ app.use(
 );
 
 app.use(bodyParser.json());
+
+app.use(cors({ origin: "*" }));
 
 app.use("/", adRouter);
 
