@@ -2,7 +2,6 @@ import { NextFunction, Request, Response } from "express";
 import db from "../lib/knex";
 import { CreateRegistrationPayload, Registration } from "../types/registration";
 import { v4 as uuid } from "uuid";
-import axios from "axios";
 import fetch from "node-fetch";
 
 const registrationTable = "registration";
@@ -31,13 +30,9 @@ export const listAll = async (
   const registrations: Registration[] = await db<Registration>(
     registrationTable
   ).select("*");
+
+  //TODO reformat, use types instead of any type
   const requests = registrations.map((registration) => {
-    /*
-    return axios.get(process.env.AD_MICROSERVICE_URL + "ad/", {
-      params: {
-        id: registration.adId,
-      },
-    });*/
     return fetch(
       process.env.AD_MICROSERVICE_URL + "ad/" + registration.adId
     ).then((response) => response.json());
@@ -61,13 +56,6 @@ export const listOne = async (
   const registration = await db<Registration>(registrationTable)
     .select("*")
     .where({ id });
-  /* const ad = await axios.get(process.env.AD_MICROSERVICE_URL + "ad/", {
-    params: {
-      id: registration[0].adId,
-    }, 
-    
-
-  });*/
   const response = await fetch(
     process.env.AD_MICROSERVICE_URL + "ad/" + registration[0].adId
   );
