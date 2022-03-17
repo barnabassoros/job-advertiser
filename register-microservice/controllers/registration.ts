@@ -22,29 +22,19 @@ export const create = async (
   res.status(201).send();
 };
 
-export const listAll = async (
+export const listAllForUser = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
+  const username = req.params.username;
   const registrations: Registration[] = await db<Registration>(
     registrationTable
-  ).select("*");
+  )
+    .select("id", "adId", "accepted", "closed", "username")
+    .where({ username });
 
-  //TODO reformat, use types instead of any type
-  const requests = registrations.map((registration) => {
-    return fetch(
-      process.env.AD_MICROSERVICE_URL + "ad/" + registration.adId
-    ).then((response) => response.json());
-  });
-  const results = (await Promise.all(requests)) as any;
-  const extendedRegistrations = registrations.map((registration, id) => {
-    return {
-      ad:results[id][0],
-      ...registration,
-    };
-  });
-  res.json(extendedRegistrations).status(200);
+  res.json(registrations).status(200);
 };
 
 export const listOne = async (
@@ -54,17 +44,7 @@ export const listOne = async (
 ) => {
   const id = req.params.id;
   const registration = await db<Registration>(registrationTable)
-    .select("*")
+    .select("id", "adId", "accepted", "closed", "username")
     .where({ id });
-  const response = await fetch(
-    process.env.AD_MICROSERVICE_URL + "ad/" + registration[0].adId
-  );
-
-  const ad = (await response.json()) as any;
-
-  const extendedRegistration = {
-    ad:ad[0],
-    ...registration[0],
-  };
-  res.json(extendedRegistration).status(200);
+  res.json(registration).status(200);
 };

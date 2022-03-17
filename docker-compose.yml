@@ -37,6 +37,13 @@ services:
     ports:
       - '3001:3001'
     command: npm run start
+  frontend:
+    build: ./frontend
+    container_name: frontend
+    volumes:
+      - '/frontend/node_modules'
+    ports:
+      - 3004:3004
 volumes:
   ad-db:
   registration-db:

@@ -6,7 +6,7 @@ const errorHandler = (error:Error, req: Request, res: Response, next:NextFunctio
     // type validation failed
     res.status(400).json({
       message: "type_validation_failed",
-      data: error.message,
+      data: error.issues,
     });
   } else {
     res.status(500).json({

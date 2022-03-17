@@ -8,6 +8,7 @@ export const create = async (
   res: Response,
   next: NextFunction
 ) => {
+  console.log(req.body);
   const data = CreateAdPayload.parse(req.body);
   const ad: Ad = {
     id: uuid(),
