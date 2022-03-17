@@ -6,22 +6,16 @@ import { Toolbar } from "@mui/material";
 const Menu = () => {
   return (
     <>
-      <AppBar position="static">
+      <AppBar color="transparent" position="static">
         <Toolbar>
           <Link to="/jobs">
-            <Button color="secondary" variant="contained">
-              Jobs
-            </Button>
+            <Button variant="contained">Jobs</Button>
           </Link>
           <Link to="/newjob">
-            <Button color="secondary" variant="contained">
-              New job
-            </Button>
+            <Button variant="contained">New job</Button>
           </Link>
           <Link to="/registrations">
-            <Button color="secondary" variant="contained">
-              Registrations
-            </Button>
+            <Button variant="contained">Registrations</Button>
           </Link>
         </Toolbar>
       </AppBar>
