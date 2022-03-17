@@ -58,7 +58,7 @@ const NewJob = () => {
           <LocalizationProvider dateAdapter={AdapterDateFns}>
             <DateTimePicker
               label="Date and time"
-              InputProps={{ ...register("Date and time", { required: true }) }}
+              InputProps={{ ...register("dateTime", { required: true }) }}
               value={dateTime}
               onChange={handleDateChange}
               renderInput={(params) => <TextField {...params}></TextField>}
@@ -67,32 +67,36 @@ const NewJob = () => {
           <TextField
             variant="outlined"
             inputProps={{
-              ...register("Location", { required: true, maxLength: 80 }),
+              ...register("location", { required: true, maxLength: 80 }),
             }}
             inputRef={locationRef}
             label="Location"
+            error={errors.location}
           ></TextField>
           <TextField
             variant="outlined"
             inputProps={{
-              ...register("Duration", { required: true, maxLength: 100 }),
+              ...register("duration", { required: true, maxLength: 100 }),
             }}
             inputRef={durationRef}
             label="Duration"
+            error={errors.duration}
           ></TextField>
           <TextField
             variant="outlined"
-            inputProps={{ ...register("Salary", { required: true }) }}
+            inputProps={{ ...register("salary", { required: true }) }}
             inputRef={salaryRef}
             label="Salary"
+            error={errors.salary}
           ></TextField>
           <TextField
             InputProps={{
-              ...register("Description", { required: true, maxLength: 80 }),
+              ...register("description", { required: true, maxLength: 80 }),
             }}
             variant="outlined"
             inputRef={descriptionRef}
             label="Description"
+            error={errors.description}
           ></TextField>
 
           <Button type="submit" variant="contained">

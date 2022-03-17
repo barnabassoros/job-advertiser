@@ -7,9 +7,11 @@ import {
   GridRenderCellParams,
 } from "@mui/x-data-grid";
 import { Button, TextField } from "@mui/material";
+import { useSnackbar } from "notistack";
 
 const Jobs = () => {
   const [jobs, setJobs] = useState<Ad[]>([]);
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const usernameRef = useRef<HTMLInputElement>();
   useEffect(() => {
     const fetchData = async () => {
@@ -20,12 +22,20 @@ const Jobs = () => {
   }, []);
   const handleApply = async (id: string) => {
     const username = usernameRef.current?.value;
+    if (!username) {
+      enqueueSnackbar("You must enter a username!", { variant: "error" });
+      return;
+    }
     const result = await fetch("http://localhost:3001/registration", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, adId: id }),
     });
-    if (result.status === 201) console.log("siker");
+    if (result.status === 201) {
+      enqueueSnackbar("Succesful application!", { variant: "success" });
+    } else {
+      enqueueSnackbar("Something went wrong!", { variant: "error" });
+    }
   };
   const columns: GridColDef[] = [
     {
