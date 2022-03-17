@@ -43,6 +43,7 @@ const NewJob = () => {
       enqueueSnackbar("Something went wrong", { variant: "error" });
     }
   };
+  console.log(errors);
 
   return (
     <div style={{ display: "flex", justifyContent: "center" }}>
@@ -65,38 +66,42 @@ const NewJob = () => {
             ></DateTimePicker>
           </LocalizationProvider>
           <TextField
+            margin="normal"
             variant="outlined"
             inputProps={{
               ...register("location", { required: true, maxLength: 80 }),
             }}
             inputRef={locationRef}
             label="Location"
-            error={errors.location}
+            error={!!errors.location}
           ></TextField>
           <TextField
+            margin="normal"
             variant="outlined"
             inputProps={{
               ...register("duration", { required: true, maxLength: 100 }),
             }}
             inputRef={durationRef}
             label="Duration"
-            error={errors.duration}
+            error={!!errors.duration}
           ></TextField>
           <TextField
+            margin="normal"
             variant="outlined"
             inputProps={{ ...register("salary", { required: true }) }}
             inputRef={salaryRef}
             label="Salary"
-            error={errors.salary}
+            error={!!errors.salary}
           ></TextField>
           <TextField
+            margin="normal"
             InputProps={{
               ...register("description", { required: true, maxLength: 80 }),
             }}
             variant="outlined"
             inputRef={descriptionRef}
             label="Description"
-            error={errors.description}
+            error={!!errors.description}
           ></TextField>
 
           <Button type="submit" variant="contained">
