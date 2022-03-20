@@ -15,7 +15,7 @@ const Jobs = () => {
   const usernameRef = useRef<HTMLInputElement>();
   useEffect(() => {
     const fetchData = async () => {
-      const result = await fetch("http://localhost:3000/ad", { method: "GET" });
+      const result = await fetch("http://localhost/ad", { method: "GET" });
       setJobs(await result.json());
     };
     fetchData();
@@ -26,7 +26,7 @@ const Jobs = () => {
       enqueueSnackbar("You must enter a username!", { variant: "error" });
       return;
     }
-    const result = await fetch("http://localhost:3001/registration", {
+    const result = await fetch("http://localhost/registration", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, adId: id }),
@@ -69,6 +69,7 @@ const Jobs = () => {
         label="Username"
         variant="outlined"
         inputRef={usernameRef}
+        margin="normal"
       ></TextField>
       <div style={{ height: 500, width: "100%" }}>
         <DataGrid rows={rows} columns={columns}></DataGrid>

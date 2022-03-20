@@ -1,6 +1,14 @@
 version: '3.8'
 
 services:
+  traefik:
+    image: traefik:v2.6
+    command: --api.insecure=true --providers.docker
+    ports:
+      - '80:80'
+      - '8080:8080'
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
   db:
     image: mysql:8.0.28
     container_name: db
@@ -9,28 +17,28 @@ services:
       - MYSQL_USER=root
     volumes:
       - db:/var/lib/mysql
-  app_ad:
+  app-ad:
     build: ./ad-microservice
     container_name: app_ad
     expose:
       - '3000'
-    ports:
-      - '3000:3000'
+    labels:
+      - traefik.http.routers.app-ad.rule=PathPrefix(`/ad`)
     command: npm run start
-  app_registration:
+  app-registration:
     build: ./register-microservice
     container_name: app_registration
     expose:
       - '3001'
-    ports:
-      - '3001:3001'
+    labels:
+      - traefik.http.routers.app-registration.rule=PathPrefix(`/registration`)
     command: npm run start
   frontend:
     build: ./frontend
     container_name: frontend
     volumes:
       - '/frontend/node_modules'
-    ports:
-      - 3004:3004
+    labels:
+      - traefik.http.routers.frontend.rule=PathPrefix(`/`)
 volumes:
   db:

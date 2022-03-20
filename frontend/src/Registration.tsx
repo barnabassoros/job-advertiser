@@ -9,11 +9,11 @@ const RegistrationPage = () => {
   const usernameRef = useRef<HTMLInputElement>();
   const handleClick = async () => {
     const registrationResults = await fetch(
-      "http://localhost:3001/registration/user/" + usernameRef.current?.value,
+      "http://localhost/registration/user/" + usernameRef.current?.value,
       { method: "GET" }
     );
     const registrationArray = await registrationResults.json();
-    const adResults = await fetch("http://localhost:3000/ad", {
+    const adResults = await fetch("http://localhost/ad", {
       method: "GET",
     });
     const adArray = await adResults.json();
@@ -56,6 +56,7 @@ const RegistrationPage = () => {
           label="username"
           inputRef={usernameRef}
           variant="outlined"
+          margin="normal"
         ></TextField>
         <Button onClick={handleClick} variant="contained">
           List

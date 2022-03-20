@@ -32,7 +32,7 @@ const NewJob = () => {
       description: descriptionRef.current?.value || "",
     };
     console.log(JSON.stringify(ad));
-    const result = await fetch("http://localhost:3000/ad", {
+    const result = await fetch("http://localhost/ad", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(ad),
