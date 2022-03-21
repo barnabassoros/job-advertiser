@@ -1,0 +1,32 @@
+{
+  "name": "review-microservice",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node build/index.js",
+    "build": "tsc && tscpaths -p tsconfig.json -s ./ -o ./build"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^17.0.19",
+    "tscpaths": "^0.0.9",
+    "typescript": "^4.5.5"
+  },
+  "dependencies": {
+    "@prisma/client": "^3.10.0",
+    "@types/cors": "^2.8.12",
+    "@types/express": "^4.17.13",
+    "@types/uuid": "^8.3.4",
+    "body-parser": "^1.19.2",
+    "cors": "^2.8.5",
+    "express": "^4.17.3",
+    "express-async-errors": "^3.1.1",
+    "knex": "^1.0.3",
+    "mysql2": "^2.3.3",
+    "uuid": "^8.3.2",
+    "zod": "^3.12.0"
+  }
+}

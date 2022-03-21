@@ -19,7 +19,7 @@ services:
       - db:/var/lib/mysql
   app-ad:
     build: ./ad-microservice
-    container_name: app_ad
+    container_name: app-ad
     environment:
       AD_DB_HOST: db
       AD_DB_USER: root
@@ -33,7 +33,7 @@ services:
     command: npm run start
   app-registration:
     build: ./register-microservice
-    container_name: app_registration
+    container_name: app-registration
     environment:
       REGISTER_DB_HOST: "db"
       REGISTER_DB_USER: "root"
@@ -44,6 +44,20 @@ services:
       - '3001'
     labels:
       - traefik.http.routers.app-registration.rule=PathPrefix(`/registration`)
+    command: npm run start
+  app-review:
+    build: ./review-microservice
+    container_name: app-review
+    environment:
+      REVIEW_DB_HOST: "db"
+      REVIEW_DB_USER: "root"
+      REVIEW_DB_PASSWORD: "pw"
+      REVIEW_DB_NAME: "review"
+      REVIEW_DB_PORT: 3306
+    expose:
+      - '3002'
+    labels:
+      - traefik.http.routers.app-review.rule=PathPrefix(`/review`)
     command: npm run start
   frontend:
     build: ./frontend
