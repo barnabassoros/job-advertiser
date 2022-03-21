@@ -1,11 +1,9 @@
 import express from "express";
 import bodyParser from "body-parser";
-import dotenv from "dotenv";
 import errorHandler from "@middleware/errorHandler";
 import registrationRouter from "@routes/registrationRouter";
 import cors from "cors";
 
-dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3001;

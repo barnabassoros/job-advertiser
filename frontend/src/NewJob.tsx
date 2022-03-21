@@ -31,7 +31,6 @@ const NewJob = () => {
       payment: parseInt(salaryRef.current?.value || "0"),
       description: descriptionRef.current?.value || "",
     };
-    console.log(JSON.stringify(ad));
     const result = await fetch("http://localhost/ad", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -43,7 +42,6 @@ const NewJob = () => {
       enqueueSnackbar("Something went wrong", { variant: "error" });
     }
   };
-  console.log(errors);
 
   return (
     <div style={{ display: "flex", justifyContent: "center" }}>

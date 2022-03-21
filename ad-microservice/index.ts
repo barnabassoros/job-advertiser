@@ -5,7 +5,7 @@ import adRouter from "@routes/adRouter";
 import errorHandler from "@middleware/errorHandler";
 import cors from "cors";
 
-dotenv.config();
+//dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3000;

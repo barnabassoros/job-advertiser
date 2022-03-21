@@ -20,6 +20,12 @@ services:
   app-ad:
     build: ./ad-microservice
     container_name: app_ad
+    environment:
+      AD_DB_HOST: db
+      AD_DB_USER: root
+      AD_DB_PASSWORD: pw
+      AD_DB_NAME: ad
+      AD_DB_PORT: 3306
     expose:
       - '3000'
     labels:
@@ -28,6 +34,12 @@ services:
   app-registration:
     build: ./register-microservice
     container_name: app_registration
+    environment:
+      REGISTER_DB_HOST: "db"
+      REGISTER_DB_USER: "root"
+      REGISTER_DB_PASSWORD: "pw"
+      REGISTER_DB_NAME: "registration"
+      REGISTER_DB_PORT: 3306
     expose:
       - '3001'
     labels:
