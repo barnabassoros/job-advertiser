@@ -1,15 +1,13 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Registration, RegistrationWithoutAd } from "./types/registration";
 import { Ad } from "./types/ad";
+import { NewReview } from "./types/review";
 import {
-  Box,
   Button,
   DialogActions,
   DialogContent,
   DialogTitle,
-  Paper,
   Rating,
-  Stack,
   TextField,
   Typography,
 } from "@mui/material";
@@ -28,6 +26,7 @@ import DescriptionIcon from "@mui/icons-material/Description";
 import CloseIcon from "@mui/icons-material/Close";
 import DoneIcon from "@mui/icons-material/Done";
 import Theme from "./Theme";
+import { useSnackbar } from "notistack";
 
 const RegistrationPage = () => {
   const [registrations, setRegistrations] = useState<Registration[]>([]);
@@ -129,9 +128,31 @@ const ReviewDialog = (props: {
   selectedRegistration: Registration;
 }) => {
   const [value, setValue] = useState(1);
-  const handleOk = () => {
+  const handleOk = async () => {
+    if (value < 1 || value > 5) {
+      enqueueSnackbar("Value must be between 1 and 5!", { variant: "error" });
+    } else {
+      if (usernameRef.current?.value === "") {
+        enqueueSnackbar("Invalid username!", { variant: "error" });
+      }
+    }
+    const review: NewReview = {
+      registrationId: props.selectedRegistration.id,
+      stars: value,
+      username: usernameRef.current?.value as string,
+    };
+    const result = await fetch("http://localhost/review", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(review),
+    });
+    if (result.status === 201) {
+      enqueueSnackbar("Succesful review!", { variant: "success" });
+    }
     props.handleClose();
   };
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const usernameRef = useRef<HTMLInputElement>();
   return (
     <Theme>
       <Dialog open={props.open} onClose={props.handleClose}>
@@ -180,6 +201,12 @@ const ReviewDialog = (props: {
             ></Rating>
             <Typography>5/{value}</Typography>
           </div>
+          <TextField
+            label="username"
+            variant="outlined"
+            inputRef={usernameRef}
+            margin="normal"
+          ></TextField>
         </DialogContent>
         <DialogActions>
           <Button variant="contained" onClick={props.handleClose}>
