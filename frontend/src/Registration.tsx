@@ -36,11 +36,11 @@ const RegistrationPage = () => {
   const usernameRef = useRef<HTMLInputElement>();
   const handleClick = async () => {
     const registrationResults = await fetch(
-      "http://localhost/registration/user/" + usernameRef.current?.value,
+      "registration/user/" + usernameRef.current?.value,
       { method: "GET" }
     );
     const registrationArray = await registrationResults.json();
-    const adResults = await fetch("http://localhost/ad", {
+    const adResults = await fetch("/ad", {
       method: "GET",
     });
     const adArray = await adResults.json();
@@ -141,7 +141,7 @@ const ReviewDialog = (props: {
       stars: value,
       username: usernameRef.current?.value as string,
     };
-    const result = await fetch("http://localhost/review", {
+    const result = await fetch("/review", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(review),

@@ -15,7 +15,7 @@ const Jobs = () => {
   const usernameRef = useRef<HTMLInputElement>();
   useEffect(() => {
     const fetchData = async () => {
-      const result = await fetch("http://localhost/ad", { method: "GET" });
+      const result = await fetch("/ad", { method: "GET" });
       setJobs(await result.json());
     };
     fetchData();
@@ -26,7 +26,7 @@ const Jobs = () => {
       enqueueSnackbar("You must enter a username!", { variant: "error" });
       return;
     }
-    const result = await fetch("http://localhost/registration", {
+    const result = await fetch("/registration", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, adId: id }),

@@ -31,7 +31,7 @@ const NewJob = () => {
       payment: parseInt(salaryRef.current?.value || "0"),
       description: descriptionRef.current?.value || "",
     };
-    const result = await fetch("http://localhost/ad", {
+    const result = await fetch("/ad", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(ad),
