@@ -59,6 +59,20 @@ services:
     labels:
       - traefik.http.routers.app-review.rule=PathPrefix(`/review`)
     command: npm run start
+  app-auth:
+    build: ./auth-microservice
+    container_name: app-auth
+    environment:
+      AUTH_DB_HOST: "db"
+      AUTH_DB_USER: "root"
+      AUTH_DB_PASSWORD: "pw"
+      AUTH_DB_NAME: "auth"
+      AUTH_DB_PORT: 3306
+    expose:
+      - '3005'
+    labels:
+      - traefik.http.routers.app-auth.rule=PathPrefix(`/auth`)
+    command: npm run start
   frontend:
     build: ./frontend
     container_name: frontend
