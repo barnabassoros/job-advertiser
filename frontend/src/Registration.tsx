@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Registration, RegistrationWithoutAd } from "./types/registration";
 import { Ad } from "./types/ad";
 import { NewReview } from "./types/review";
@@ -27,33 +27,45 @@ import CloseIcon from "@mui/icons-material/Close";
 import DoneIcon from "@mui/icons-material/Done";
 import Theme from "./Theme";
 import { useSnackbar } from "notistack";
+import ApiServices from "./lib/api";
 
 const RegistrationPage = () => {
   const [registrations, setRegistrations] = useState<Registration[]>([]);
   const [reviewDialogOpen, setReviewDialogOpen] = useState(false);
   const [selectedRegistration, setSelectedRegistration] =
     useState<Registration>();
-  const usernameRef = useRef<HTMLInputElement>();
-  const handleClick = async () => {
-    const registrationResults = await fetch(
-      "registration/user/" + usernameRef.current?.value,
-      { method: "GET" }
-    );
-    const registrationArray = await registrationResults.json();
-    const adResults = await fetch("/ad", {
-      method: "GET",
-    });
-    const adArray = await adResults.json();
-    setRegistrations(
-      registrationArray.map((reg: RegistrationWithoutAd) => {
-        const registration: Registration = {
-          ...reg,
-          ad: adArray.find((ad: Ad) => ad.id === reg.adId),
-        };
-        return registration;
-      })
-    );
-  };
+  useEffect(() => {
+    const getData = async () => {
+      const registrationResults = await ApiServices.get("registration/");
+      const registrationArray = await registrationResults.data;
+      const adIds = registrationArray.map(
+        (registration: Registration) => registration.adId
+      );
+      const uniqueAdIds = adIds.filter(
+        (id: string, index: number, self: Array<string>) => {
+          return self.indexOf(id) === index;
+        }
+      );
+      const queryParams = uniqueAdIds.reduce(
+        (prevValue: string, currentValue: string) => {
+          return prevValue + "&id=" + currentValue;
+        },
+        ""
+      );
+      const adResults = await ApiServices.get("/ad/one?" + queryParams.substring(1));
+      const adArray = await adResults.data;
+      setRegistrations(
+        registrationArray.map((reg: RegistrationWithoutAd) => {
+          const registration: Registration = {
+            ...reg,
+            ad: adArray.find((ad: Ad) => ad.id === reg.adId),
+          };
+          return registration;
+        })
+      );
+    };
+    getData();
+  }, []);
   const handleClose = () => {
     setReviewDialogOpen(false);
   };
@@ -97,17 +109,6 @@ const RegistrationPage = () => {
   });
   return (
     <div>
-      <div style={{ display: "flex", alignItems: "center" }}>
-        <TextField
-          label="username"
-          inputRef={usernameRef}
-          variant="outlined"
-          margin="normal"
-        ></TextField>
-        <Button onClick={handleClick} variant="contained">
-          List
-        </Button>
-      </div>
       <div style={{ height: 500, width: "100%" }}>
         <DataGrid columns={columns} rows={rows}></DataGrid>
       </div>
@@ -141,10 +142,8 @@ const ReviewDialog = (props: {
       stars: value,
       username: usernameRef.current?.value as string,
     };
-    const result = await fetch("/review", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(review),
+    const result = await ApiServices.post("/review", {
+      data: JSON.stringify(review),
     });
     if (result.status === 201) {
       enqueueSnackbar("Succesful review!", { variant: "success" });

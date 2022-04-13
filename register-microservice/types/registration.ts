@@ -5,10 +5,9 @@ export type Registration = {
   adId: string;
   accepted: boolean;
   closed: boolean;
-  username: string;
+  userId: string;
 };
 
 export const CreateRegistrationPayload = z.object({
   adId: z.string().uuid(),
-  username: z.string(),
 });

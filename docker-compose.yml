@@ -3,6 +3,7 @@ version: '3.8'
 services:
   traefik:
     image: traefik:v2.6
+    container_name: traefik
     command: --api.insecure=true --providers.docker
     ports:
       - '80:80'
@@ -17,9 +18,9 @@ services:
       - MYSQL_USER=root
     volumes:
       - db:/var/lib/mysql
-  app-ad:
+  ad:
     build: ./ad-microservice
-    container_name: app-ad
+    container_name: ad
     environment:
       AD_DB_HOST: db
       AD_DB_USER: root
@@ -29,11 +30,12 @@ services:
     expose:
       - '3000'
     labels:
-      - traefik.http.routers.app-ad.rule=PathPrefix(`/ad`)
+      - "traefik.http.routers.ad.rule=PathPrefix(`/ad`)"
+      - "traefik.http.routers.ad.middlewares=test-auth@docker"
     command: npm run start
-  app-registration:
+  registration:
     build: ./register-microservice
-    container_name: app-registration
+    container_name: registration
     environment:
       REGISTER_DB_HOST: "db"
       REGISTER_DB_USER: "root"
@@ -43,11 +45,12 @@ services:
     expose:
       - '3001'
     labels:
-      - traefik.http.routers.app-registration.rule=PathPrefix(`/registration`)
+      - "traefik.http.routers.registration.rule=PathPrefix(`/registration`)"
+      - "traefik.http.routers.registration.middlewares=test-auth@docker"
     command: npm run start
-  app-review:
+  review:
     build: ./review-microservice
-    container_name: app-review
+    container_name: review
     environment:
       REVIEW_DB_HOST: "db"
       REVIEW_DB_USER: "root"
@@ -57,28 +60,36 @@ services:
     expose:
       - '3002'
     labels:
-      - traefik.http.routers.app-review.rule=PathPrefix(`/review`)
+      - "traefik.http.routers.review.rule=PathPrefix(`/review`)"
+      - "traefik.http.routers.review.middlewares=test-auth@docker"
     command: npm run start
-  app-auth:
+  auth:
     build: ./auth-microservice
-    container_name: app-auth
+    container_name: auth
     environment:
       AUTH_DB_HOST: "db"
       AUTH_DB_USER: "root"
       AUTH_DB_PASSWORD: "pw"
       AUTH_DB_NAME: "auth"
       AUTH_DB_PORT: 3306
+      JWT_SECRET: "JIUzI1NiJ9eyJS"
+      GOOGLE_CLIENT_ID: 912838585910-4oknosaesv398s5639o4npmg0qkmhg23.apps.googleusercontent.com
     expose:
       - '3005'
     labels:
-      - traefik.http.routers.app-auth.rule=PathPrefix(`/auth`)
+      - "traefik.http.routers.auth.rule=PathPrefix(`/auth`)"
+      - "traefik.http.middlewares.test-auth.forwardauth.address=http://localhost/auth/verify"
+      - "traefik.http.middlewares.test-auth.forwardauth.authResponseHeaders=X-User-Id"
+      - "traefik.http.middlewares.test-auth.forwardauth.trustForwardHeader=true"
     command: npm run start
   frontend:
     build: ./frontend
     container_name: frontend
+    environment:
+      GOOGLE_CLIENT_ID: 912838585910-4oknosaesv398s5639o4npmg0qkmhg23.apps.googleusercontent.com
     volumes:
       - '/frontend/node_modules'
     labels:
-      - traefik.http.routers.frontend.rule=PathPrefix(`/`)
+      - "traefik.http.routers.frontend.rule=PathPrefix(`/`)"
 volumes:
   db:

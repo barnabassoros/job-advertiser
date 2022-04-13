@@ -7,6 +7,6 @@ adRouter.post("/ad", controller.create);
 adRouter.get("/ad", controller.listAll);
 adRouter.put("/ad/:id", controller.update);
 adRouter.delete("/ad/:id", controller.deleteOne);
-adRouter.get("/ad/:id", controller.listOne);
+adRouter.get("/ad/one", controller.listOne);
 
 export default adRouter;

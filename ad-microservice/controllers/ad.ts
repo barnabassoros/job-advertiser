@@ -11,6 +11,7 @@ export const create = async (
   const data = CreateAdPayload.parse(req.body);
   const ad: Ad = {
     id: uuid(),
+    userId: req.get("X-User-Id") as string,
     ...data,
   };
   await db("ad").insert(ad);
@@ -22,7 +23,9 @@ export const listAll = async (
   res: Response,
   next: NextFunction
 ) => {
-  const ads: Ad[] = await db<Ad>("ad").select("*");
+  const userId = req.get("X-User-Id");
+  if (!userId) res.status(400).send();
+  const ads: Ad[] = await db<Ad>("ad").where({ userId }).select("*");
   res.json(ads).status(200);
 };
 
@@ -31,8 +34,8 @@ export const listOne = async (
   res: Response,
   next: NextFunction
 ) => {
-  const id = req.params.id;
-  const ad = await db("ad").select().where({ id });
+  const ids: Array<string> = req.query.id as Array<string>;
+  const ad = await db("ad").select().whereIn("id", ids);
   res.json(ad).status(200);
 };
 

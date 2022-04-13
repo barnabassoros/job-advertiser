@@ -6,8 +6,9 @@ import {
   GridColDef,
   GridRenderCellParams,
 } from "@mui/x-data-grid";
-import { Button, TextField } from "@mui/material";
+import { Button } from "@mui/material";
 import { useSnackbar } from "notistack";
+import ApiServices from "./lib/api";
 
 const Jobs = () => {
   const [jobs, setJobs] = useState<Ad[]>([]);
@@ -15,21 +16,14 @@ const Jobs = () => {
   const usernameRef = useRef<HTMLInputElement>();
   useEffect(() => {
     const fetchData = async () => {
-      const result = await fetch("/ad", { method: "GET" });
-      setJobs(await result.json());
+      const result = await ApiServices.get("/ad");
+      setJobs(result.data);
     };
     fetchData();
   }, []);
   const handleApply = async (id: string) => {
-    const username = usernameRef.current?.value;
-    if (!username) {
-      enqueueSnackbar("You must enter a username!", { variant: "error" });
-      return;
-    }
-    const result = await fetch("/registration", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, adId: id }),
+    const result = await ApiServices.post("/registration", {
+      data: JSON.stringify({ adId: id }),
     });
     if (result.status === 201) {
       enqueueSnackbar("Succesful application!", { variant: "success" });
@@ -65,12 +59,6 @@ const Jobs = () => {
   const rows: GridRowsProp = jobs;
   return (
     <>
-      <TextField
-        label="Username"
-        variant="outlined"
-        inputRef={usernameRef}
-        margin="normal"
-      ></TextField>
       <div style={{ height: 500, width: "100%" }}>
         <DataGrid rows={rows} columns={columns}></DataGrid>
       </div>

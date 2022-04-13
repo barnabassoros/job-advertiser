@@ -7,6 +7,7 @@ import { NewAd } from "./types/ad";
 import Typography from "@mui/material/Typography";
 import { useSnackbar } from "notistack";
 import { useForm } from "react-hook-form";
+import ApiServices from "./lib/api";
 
 const NewJob = () => {
   const {
@@ -31,11 +32,7 @@ const NewJob = () => {
       payment: parseInt(salaryRef.current?.value || "0"),
       description: descriptionRef.current?.value || "",
     };
-    const result = await fetch("/ad", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(ad),
-    });
+    const result = await ApiServices.post("/ad", JSON.stringify(ad));
     if (result.status === 201) {
       enqueueSnackbar("Succesful job creation!", { variant: "success" });
     } else {

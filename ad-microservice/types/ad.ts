@@ -7,6 +7,7 @@ export type Ad = {
   duration: string;
   payment: number;
   description: string;
+  userId: string;
 };
 
 //default zod date only accepts javascript Date type, this way it can process date string from request body
