@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "NpkRDDEsXUb2KdGCTWH0FTcv3kqirQ6umnjGXsCzFww=",
+  "Source": "reporting-microservice",
+  "BasePath": "_content/reporting-microservice",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

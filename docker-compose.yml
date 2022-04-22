@@ -18,6 +18,24 @@ services:
       - MYSQL_USER=root
     volumes:
       - db:/var/lib/mysql
+  mongo:
+    image: mongo:5.0
+    container_name: mongo
+    ports:
+      - '3307:27017'
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=pw
+    volumes:
+      - mongo:/data/db
+  reporting:
+    build: ./reporting-microservice
+    container_name: reporting
+    ports: 
+      - "8081:80"
+    labels:
+      - "traefik.http.routers.ad.rule=PathPrefix(`/reporting`)"
+    command: dotnet /app/reporting-microservice.dll
   ad:
     build: ./ad-microservice
     container_name: ad
@@ -93,3 +111,4 @@ services:
       - "traefik.http.routers.frontend.rule=PathPrefix(`/`)"
 volumes:
   db:
+  mongo:
