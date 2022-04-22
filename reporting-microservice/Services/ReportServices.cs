@@ -10,7 +10,7 @@ namespace reporting_microservice.Services
 
         public ReportServices(IOptions<ReportingDatabaseSettings> reportsDatabaseSettings)
         {
-            var mongoClient = new MongoClient(@"mongodb://root:pw@localhost:3307/?authMechanism=DEFAULT");
+            var mongoClient = new MongoClient(reportsDatabaseSettings.Value.ConnectionString);
 
             var mongoDatabase = mongoClient.GetDatabase(reportsDatabaseSettings.Value.DatabaseName);
 
