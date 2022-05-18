@@ -2,6 +2,50 @@ import { NextFunction, Request, Response } from "express";
 import { CreateAdPayload, Ad, UpdateAdPayload } from "@type/ad";
 import { v4 as uuid } from "uuid";
 import db from "@lib/knex";
+import { connect } from "amqplib";
+
+let open: any;
+
+const wrapMessage = (value: any) => {
+  const message = {
+    destinationAddress: "rabbitmq://rabbitmq/Ad",
+    headers: {},
+    messageType: ["urn:message:reporting_microservice.Models:Ad"],
+    message: {
+      ...value,
+    },
+  };
+  return message;
+};
+
+const sendMessage = async (ad: Ad) => {
+  if (!open)
+    open = connect(
+      `amqp://${process.env.BROKER_USER}:${process.env.BROKER_PW}@${process.env.BROKER_URL}`
+    );
+  open
+    .then((conn: any) => {
+      return conn.createChannel();
+    })
+    .then((channel: any) => {
+      return channel.assertQueue("Ad").then((ok: any) => {
+        return channel.sendToQueue(
+          "Ad",
+          Buffer.from(
+            JSON.stringify(
+              wrapMessage({
+                Id: ad.id,
+                UserId: ad.userId,
+                Time: ad.time,
+                Payment: ad.payment,
+              })
+            )
+          )
+        );
+      });
+    })
+    .catch(console.warn);
+};
 
 export const create = async (
   req: Request,
@@ -15,6 +59,7 @@ export const create = async (
     ...data,
   };
   await db("ad").insert(ad);
+  sendMessage(ad);
   res.status(201).send();
 };
 
@@ -34,7 +79,9 @@ export const listOne = async (
   res: Response,
   next: NextFunction
 ) => {
-  const ids: Array<string> = req.query.id as Array<string>;
+  const header = req.get("X-Ad-Ids") as string;
+  const ids: Array<string> = header?.split(";");
+
   const ad = await db("ad").select().whereIn("id", ids);
   res.json(ad).status(200);
 };

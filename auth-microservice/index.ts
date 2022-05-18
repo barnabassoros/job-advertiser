@@ -132,20 +132,33 @@ app.use(
       process.env.JWT_SECRET as string,
       { expiresIn: "1d" }
     );
+    res.setHeader("X-User-Name", user.name);
+    res.setHeader("X-User-Email", user.email);
+    res.setHeader("X-User-Id", user.id);
+
     res.json({ token: jwtToken }).status(200);
   }
 );
 
 app.use("/auth/verify", (req: Request, res: Response, next: NextFunction) => {
-  console.log(req.headers);
   const token = req.headers.authorization?.replace("Bearer ", "");
-  console.log(token);
   if (!token) res.status(401).send();
-  if (!token) res.status(401).send();
-  const userId = jwt.verify(token as string, process.env.JWT_SECRET as string);
-  if (!userId) res.status(401).send();
+  let userId;
+  try {
+    userId = jwt.verify(token as string, process.env.JWT_SECRET as string);
+  } catch (ex) {
+    res.status(401).send();
+  }
 
   res.setHeader("X-User-Id", (userId as any).userId as string);
+  res.setHeader(
+    "X-User-Name",
+    (userId as any).name === undefined ? "" : (userId as any).name
+  );
+  res.setHeader(
+    "X-User-Email",
+    (userId as any).email === undefined ? "" : (userId as any).email
+  );
   res.status(200).send();
 });
 

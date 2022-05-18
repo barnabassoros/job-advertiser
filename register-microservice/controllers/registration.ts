@@ -2,6 +2,50 @@ import { NextFunction, Request, Response } from "express";
 import db from "../lib/knex";
 import { CreateRegistrationPayload, Registration } from "../types/registration";
 import { v4 as uuid } from "uuid";
+import { connect } from "amqplib";
+
+let open: any;
+
+const wrapMessage = (value: any) => {
+  const message = {
+    destinationAddress: "rabbitmq://rabbitmq/Registration",
+    headers: {},
+    messageType: ["urn:message:reporting_microservice.Models:Registration"],
+    message: {
+      ...value,
+    },
+  };
+  return message;
+};
+
+const sendMessage = async (registration: Registration) => {
+  if (!open)
+    open = connect(
+      `amqp://${process.env.BROKER_USER}:${process.env.BROKER_PW}@${process.env.BROKER_URL}`
+    );
+  open
+    .then((conn: any) => {
+      return conn.createChannel();
+    })
+    .then((channel: any) => {
+      return channel.assertQueue("Registration").then((ok: any) => {
+        return channel.sendToQueue(
+          "Registration",
+          Buffer.from(
+            JSON.stringify(
+              wrapMessage({
+                Id: registration.id,
+                AdId: registration.adId,
+                Closed: registration.closed,
+                UserId: registration.userId,
+              })
+            )
+          )
+        );
+      });
+    })
+    .catch(console.warn);
+};
 
 const registrationTable = "registration";
 
@@ -19,6 +63,7 @@ export const create = async (
     ...data,
   };
   await db(registrationTable).insert(registration);
+  sendMessage(registration);
   res.status(201).send();
 };
 

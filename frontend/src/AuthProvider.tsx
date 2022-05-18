@@ -19,13 +19,19 @@ const AuthProvider = ({ children }: any) => {
     if (token) setLoggedIn(true);
   }, []);
   const handleLogin = async (googleData: any) => {
-    const res = await fetch("/auth/google", {
+    const res = await fetch("/api/auth/google", {
       method: "POST",
       body: JSON.stringify({ token: googleData.tokenId }),
       headers: {
         "Content-Type": "application/json",
       },
     });
+    const userId = res.headers.get("X-User-Id");
+    localStorage.setItem("userId", userId as string);
+    const name = res.headers.get("X-User-Name");
+    localStorage.setItem("name", name as string);
+    const email = res.headers.get("X-User-Email");
+    localStorage.setItem("email", email as string);
     const data = await res.json();
     localStorage.setItem("token", data.token);
     window.location.reload();
@@ -38,7 +44,7 @@ const AuthProvider = ({ children }: any) => {
           <h1>Not logged in</h1>
           <Button
             variant="contained"
-            href="https://github.com/login/oauth/authorize?client_id=17864b3bb7f139356969&redirect_uri=http://localhost/auth/redirect/github"
+            href="https://github.com/login/oauth/authorize?client_id=17864b3bb7f139356969&redirect_uri=http://localhost/api/auth/redirect/github"
           >
             Sign in with GitHub
           </Button>

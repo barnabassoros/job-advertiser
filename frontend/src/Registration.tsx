@@ -28,15 +28,27 @@ import DoneIcon from "@mui/icons-material/Done";
 import Theme from "./Theme";
 import { useSnackbar } from "notistack";
 import ApiServices from "./lib/api";
+import { AxiosRequestConfig } from "axios";
+import useWindowDimensions from "./lib/windowSize";
+import { ErrorBoundary } from "react-error-boundary";
 
 const RegistrationPage = () => {
   const [registrations, setRegistrations] = useState<Registration[]>([]);
   const [reviewDialogOpen, setReviewDialogOpen] = useState(false);
   const [selectedRegistration, setSelectedRegistration] =
     useState<Registration>();
+  const [backendError, setBackendError] = useState(false);
+  const { height } = useWindowDimensions();
   useEffect(() => {
     const getData = async () => {
-      const registrationResults = await ApiServices.get("registration/");
+      const registrationResults = await ApiServices.get("/api/registration");
+      console.log(registrationResults);
+      if (registrationResults.status !== 200) {
+        setBackendError(true);
+        return;
+      } else {
+        setBackendError(false);
+      }
       const registrationArray = await registrationResults.data;
       const adIds = registrationArray.map(
         (registration: Registration) => registration.adId
@@ -46,23 +58,32 @@ const RegistrationPage = () => {
           return self.indexOf(id) === index;
         }
       );
-      const queryParams = uniqueAdIds.reduce(
+      const headers = uniqueAdIds.reduce(
         (prevValue: string, currentValue: string) => {
-          return prevValue + "&id=" + currentValue;
+          return prevValue + ";" + currentValue;
         },
         ""
       );
-      const adResults = await ApiServices.get("/ad/one?" + queryParams.substring(1));
+      const config: AxiosRequestConfig<any> = {};
+      config.headers = {
+        "X-Ad-Ids": headers.substring(1),
+      };
+      const adResults = await ApiServices.get("/api/ad/one", config);
       const adArray = await adResults.data;
-      setRegistrations(
-        registrationArray.map((reg: RegistrationWithoutAd) => {
-          const registration: Registration = {
-            ...reg,
-            ad: adArray.find((ad: Ad) => ad.id === reg.adId),
-          };
-          return registration;
-        })
-      );
+      if (adResults.status !== 200) {
+        setBackendError(true);
+      } else {
+        setBackendError(false);
+        setRegistrations(
+          registrationArray.map((reg: RegistrationWithoutAd) => {
+            const registration: Registration = {
+              ...reg,
+              ad: adArray.find((ad: Ad) => ad.id === reg.adId),
+            };
+            return registration;
+          })
+        );
+      }
     };
     getData();
   }, []);
@@ -107,19 +128,33 @@ const RegistrationPage = () => {
       ...rest,
     };
   });
-  return (
-    <div>
-      <div style={{ height: 500, width: "100%" }}>
-        <DataGrid columns={columns} rows={rows}></DataGrid>
+  function ErrorFallback({ error, resetErrorBoundary }: any) {
+    return (
+      <div role="alert">
+        <Typography>Something went wrong, check back later</Typography>
       </div>
-      {reviewDialogOpen && (
-        <ReviewDialog
-          open={reviewDialogOpen}
-          handleClose={handleClose}
-          selectedRegistration={selectedRegistration as Registration}
-        ></ReviewDialog>
+    );
+  }
+  return (
+    <>
+      {backendError && <ErrorFallback></ErrorFallback>}
+      {!backendError && (
+        <ErrorBoundary FallbackComponent={ErrorFallback}>
+          <div>
+            <div style={{ height: height - 100, width: "100%" }}>
+              <DataGrid columns={columns} rows={rows}></DataGrid>
+            </div>
+            {reviewDialogOpen && (
+              <ReviewDialog
+                open={reviewDialogOpen}
+                handleClose={handleClose}
+                selectedRegistration={selectedRegistration as Registration}
+              ></ReviewDialog>
+            )}
+          </div>
+        </ErrorBoundary>
       )}
-    </div>
+    </>
   );
 };
 
@@ -132,19 +167,15 @@ const ReviewDialog = (props: {
   const handleOk = async () => {
     if (value < 1 || value > 5) {
       enqueueSnackbar("Value must be between 1 and 5!", { variant: "error" });
-    } else {
-      if (usernameRef.current?.value === "") {
-        enqueueSnackbar("Invalid username!", { variant: "error" });
-      }
     }
     const review: NewReview = {
       registrationId: props.selectedRegistration.id,
       stars: value,
-      username: usernameRef.current?.value as string,
     };
-    const result = await ApiServices.post("/review", {
-      data: JSON.stringify(review),
-    });
+    const result = await ApiServices.post(
+      "/api/review",
+      JSON.stringify(review)
+    );
     if (result.status === 201) {
       enqueueSnackbar("Succesful review!", { variant: "success" });
     }
@@ -200,12 +231,6 @@ const ReviewDialog = (props: {
             ></Rating>
             <Typography>5/{value}</Typography>
           </div>
-          <TextField
-            label="username"
-            variant="outlined"
-            inputRef={usernameRef}
-            margin="normal"
-          ></TextField>
         </DialogContent>
         <DialogActions>
           <Button variant="contained" onClick={props.handleClose}>

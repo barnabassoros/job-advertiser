@@ -8,4 +8,5 @@ export type NewAd = {
 
 export type Ad = NewAd & {
   id: string;
+  userId:string;
 };

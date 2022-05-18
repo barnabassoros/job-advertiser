@@ -2,6 +2,50 @@ import db from "@lib/knex";
 import { CreateReviewPayload, Review } from "@type/review";
 import { Request, Response } from "express";
 import { v4 as uuid } from "uuid";
+import { connect } from "amqplib";
+
+let open: any;
+
+const wrapMessage = (value: any) => {
+  const message = {
+    destinationAddress: "rabbitmq://rabbitmq/Review",
+    headers: {},
+    messageType: ["urn:message:reporting_microservice.Models:Review"],
+    message: {
+      ...value,
+    },
+  };
+  return message;
+};
+
+const sendMessage = async (review: Review) => {
+  if (!open)
+    open = connect(
+      `amqp://${process.env.BROKER_USER}:${process.env.BROKER_PW}@${process.env.BROKER_URL}`
+    );
+  open
+    .then((conn: any) => {
+      return conn.createChannel();
+    })
+    .then((channel: any) => {
+      return channel.assertQueue("Review").then((ok: any) => {
+        return channel.sendToQueue(
+          "Review",
+          Buffer.from(
+            JSON.stringify(
+              wrapMessage({
+                Id: review.id,
+                RegistrationId: review.registrationId,
+                Stars: review.stars,
+                UserId: review.userId,
+              })
+            )
+          )
+        );
+      });
+    })
+    .catch(console.warn);
+};
 
 export const create = async (req: Request, res: Response) => {
   const data = CreateReviewPayload.parse(req.body);
@@ -11,6 +55,7 @@ export const create = async (req: Request, res: Response) => {
     ...data,
   };
   await db("review").insert(review);
+  sendMessage(review);
   res.status(201).send();
 };
 

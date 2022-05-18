@@ -17,7 +17,6 @@ const ApiServices = {
     return axios.get(url, config);
   },
   post: (url: string, data: any, config?: AxiosRequestConfig<any>) => {
-    console.log("elotte", config);
     if (config) {
       config.headers = {
         ...config.headers,
@@ -32,7 +31,6 @@ const ApiServices = {
         },
       };
     }
-    console.log("utana", config);
     return axios.post(url, data, config);
   },
 };

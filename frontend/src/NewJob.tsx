@@ -32,7 +32,7 @@ const NewJob = () => {
       payment: parseInt(salaryRef.current?.value || "0"),
       description: descriptionRef.current?.value || "",
     };
-    const result = await ApiServices.post("/ad", JSON.stringify(ad));
+    const result = await ApiServices.post("/api/ad", JSON.stringify(ad));
     if (result.status === 201) {
       enqueueSnackbar("Succesful job creation!", { variant: "success" });
     } else {

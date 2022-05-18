@@ -23,18 +23,20 @@ services:
     container_name: mongo
     ports:
       - '3307:27017'
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=root
-      - MONGO_INITDB_ROOT_PASSWORD=pw
+    expose:
+      - '27017'
     volumes:
       - mongo:/data/db
-  reporting:
+  report:
     build: ./reporting-microservice
-    container_name: reporting
-    ports: 
+    container_name: report
+    ports:
       - "8081:80"
+    expose:
+      - '80'
     labels:
-      - "traefik.http.routers.ad.rule=PathPrefix(`/reporting`)"
+      - "traefik.http.routers.reporting.rule=PathPrefix(`/report`)"
+      - "traefik.http.routers.reporting.middlewares=test-auth@docker"
     command: dotnet /app/reporting-microservice.dll
   ad:
     build: ./ad-microservice
@@ -45,6 +47,9 @@ services:
       AD_DB_PASSWORD: pw
       AD_DB_NAME: ad
       AD_DB_PORT: 3306
+      BROKER_URL: rabbitmq
+      BROKER_USER: root
+      BROKER_PW: pw
     expose:
       - '3000'
     labels:
@@ -60,6 +65,9 @@ services:
       REGISTER_DB_PASSWORD: "pw"
       REGISTER_DB_NAME: "registration"
       REGISTER_DB_PORT: 3306
+      BROKER_URL: rabbitmq
+      BROKER_USER: root
+      BROKER_PW: pw
     expose:
       - '3001'
     labels:
@@ -75,6 +83,9 @@ services:
       REVIEW_DB_PASSWORD: "pw"
       REVIEW_DB_NAME: "review"
       REVIEW_DB_PORT: 3306
+      BROKER_URL: rabbitmq
+      BROKER_USER: root
+      BROKER_PW: pw
     expose:
       - '3002'
     labels:
@@ -107,8 +118,21 @@ services:
       GOOGLE_CLIENT_ID: 912838585910-4oknosaesv398s5639o4npmg0qkmhg23.apps.googleusercontent.com
     volumes:
       - '/frontend/node_modules'
+    expose:
+      - "81"
     labels:
+      - "traefik.http.services.frontend-ad.loadbalancer.server.port=81"
       - "traefik.http.routers.frontend.rule=PathPrefix(`/`)"
+  rabbitmq3:
+    container_name: rabbitmq
+    image: rabbitmq:3-management
+    environment:
+      - RABBITMQ_DEFAULT_USER=root
+      - RABBITMQ_DEFAULT_PASS=pw
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+
 volumes:
   db:
   mongo:
