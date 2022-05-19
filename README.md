@@ -34,13 +34,19 @@ Ezek megfontolásával érdemes dönteni a különböző architektúrák mellett
 ### Egy általános microservice alkalmazás architektúra rajza.
 ![](general.png)
 
-## Technológiák
+## Az alkalmazásban használt technológiák
 
 ### OAuth
 
+OAuth használatával nem kell felhasználónév illetve jelszó párossal foglalkozni az alkalmazásnak, hanem ezt a google, illetve a github kezeli. Az oldal megnyitása után két gombbal lehet bejelentkezni, és ezután a szolgáltató ad egy access tokent, és a felhasználó adatait, amivel azonosítható. Az access tokennel ellenőrizhető a session, és ha érvényes, akkor generálhat egy JWT tokent az alkalmazás, ami alapján tudja majd autentikálni a felhasználót.
+
 ### traefik
 
-## 
+Az egyik legnépszerűbb api gateway megoldás. Minden beérkező kérést megvizsgál, és a megfelelő konténernek továbbítja. A kéréseken middlewarek használatával módosításokat is lehet végezni ezeken a kéréseken, mint pl fejlécek módosítása stb.
+
+### rabbitmq
+
+Bróker szolgáltatás, ami a backendek közötti aszinkron kommunikációt teszi lehetővé. Amqp protokollt használ, a küldők (producerek) queue-ba küldik az adatokat, és a fogadók (consumerek) ezekből a sorokból tudják kiolvasni.
 
 ### Docker
 
