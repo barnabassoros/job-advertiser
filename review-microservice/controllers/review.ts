@@ -18,7 +18,7 @@ const wrapMessage = (value: any) => {
   return message;
 };
 
-const sendMessage = async (review: Review) => {
+const sendMessage = async (review: Review, time: Date) => {
   if (!open)
     open = connect(
       `amqp://${process.env.BROKER_USER}:${process.env.BROKER_PW}@${process.env.BROKER_URL}`
@@ -38,6 +38,7 @@ const sendMessage = async (review: Review) => {
                 RegistrationId: review.registrationId,
                 Stars: review.stars,
                 UserId: review.userId,
+                Time: time,
               })
             )
           )
@@ -48,14 +49,14 @@ const sendMessage = async (review: Review) => {
 };
 
 export const create = async (req: Request, res: Response) => {
-  const data = CreateReviewPayload.parse(req.body);
+  const { time, ...data } = CreateReviewPayload.parse(req.body);
   const review: Review = {
     id: uuid(),
     userId: req.get("X-User-Id") as string,
     ...data,
   };
   await db("review").insert(review);
-  sendMessage(review);
+  sendMessage(review, time);
   res.status(201).send();
 };
 

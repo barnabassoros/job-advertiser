@@ -50,6 +50,12 @@ const RegistrationPage = () => {
         setBackendError(false);
       }
       const registrationArray = await registrationResults.data;
+      if (registrationArray.includes("html")) {
+        setBackendError(true);
+        return;
+      } else {
+        setBackendError(false);
+      }
       const adIds = registrationArray.map(
         (registration: Registration) => registration.adId
       );
@@ -171,6 +177,7 @@ const ReviewDialog = (props: {
     const review: NewReview = {
       registrationId: props.selectedRegistration.id,
       stars: value,
+      time: props.selectedRegistration.ad.time,
     };
     const result = await ApiServices.post(
       "/api/review",

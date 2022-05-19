@@ -41,3 +41,9 @@
 \\wsl.localhost\Ubuntu\home\slanec\ad\reporting-microservice\obj\Debug\net6.0\reporting-microservice.pdb
 \\wsl.localhost\Ubuntu\home\slanec\ad\reporting-microservice\obj\Debug\net6.0\reporting-microservice.genruntimeconfig.cache
 \\wsl.localhost\Ubuntu\home\slanec\ad\reporting-microservice\obj\Debug\net6.0\ref\reporting-microservice.dll
+\\wsl.localhost\Ubuntu\home\slanec\ad\reporting-microservice\bin\Debug\net6.0\MassTransit.dll
+\\wsl.localhost\Ubuntu\home\slanec\ad\reporting-microservice\bin\Debug\net6.0\MassTransit.Abstractions.dll
+\\wsl.localhost\Ubuntu\home\slanec\ad\reporting-microservice\bin\Debug\net6.0\MassTransit.RabbitMqTransport.dll
+\\wsl.localhost\Ubuntu\home\slanec\ad\reporting-microservice\bin\Debug\net6.0\Microsoft.Bcl.AsyncInterfaces.dll
+\\wsl.localhost\Ubuntu\home\slanec\ad\reporting-microservice\bin\Debug\net6.0\RabbitMQ.Client.dll
+\\wsl.localhost\Ubuntu\home\slanec\ad\reporting-microservice\bin\Debug\net6.0\System.Text.Json.dll

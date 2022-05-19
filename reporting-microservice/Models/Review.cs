@@ -6,5 +6,6 @@
         public string UserId { get; set; }
         public string RegistrationId { get; set; }
         public int Stars { get; set; }
+        public DateTime Time { get; set; }
     }
 }

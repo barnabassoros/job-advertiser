@@ -1,6 +1,12 @@
 export type NewReview = {
   registrationId: string;
   stars: number;
+  time: Date;
 };
 
-export type Review = NewReview & { id: string; userId: string };
+export type Review = {
+  registrationId: string;
+  stars: number;
+  id: string;
+  userId: string;
+};

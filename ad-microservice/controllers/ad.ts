@@ -68,9 +68,9 @@ export const listAll = async (
   res: Response,
   next: NextFunction
 ) => {
-  const userId = req.get("X-User-Id");
-  if (!userId) res.status(400).send();
-  const ads: Ad[] = await db<Ad>("ad").where({ userId }).select("*");
+  //const userId = req.get("X-User-Id");
+  //if (!userId) res.status(400).send();
+  const ads: Ad[] = await db<Ad>("ad").select("*");
   res.json(ads).status(200);
 };
 

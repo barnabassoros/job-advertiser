@@ -65,6 +65,17 @@ public class ReportController : ControllerBase
         return list;
     }
 
+    public List<DailyReviewData> createMonthlyList(List<double> payments)
+    {
+        List<DailyReviewData> list = new List<DailyReviewData>();
+
+        for (int i = 0; i < payments.Count; i++)
+        {
+            list.Add(new DailyReviewData(i + 1, payments[i]));
+        }
+        return list;
+    }
+
     public List<MonthlyPaymentData> createYearlyPaymentList(List<int> payments)
     {
         List<MonthlyPaymentData> list = new List<MonthlyPaymentData>();
@@ -139,5 +150,13 @@ public class ReportController : ControllerBase
         return createYearlyReviewList(payments);
     }
 
+    [HttpGet]
+    [Route("reviews/{year}/{month}")]
+    [Produces("application/json")]
+    public List<DailyReviewData> GetMonthlyReviews(int year, int month, [FromHeader(Name = "X-User-Id")] string userId)
+    {
+        var payments = _reviewServices.GetMonthlyReviews(userId, year, month);
+        return createMonthlyList(payments);
+    }
 }
 
