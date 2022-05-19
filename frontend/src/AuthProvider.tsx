@@ -48,12 +48,6 @@ const AuthProvider = ({ children }: any) => {
           >
             Sign in with GitHub
           </Button>
-          <Button
-            variant="contained"
-            href="https://accounts.google.com/o/oauth2/v2/auth"
-          >
-            Sign in with Google
-          </Button>
           <GoogleLogin
             clientId={GOOGLE_CLIENT_ID}
             buttonText="Sign in with google"
